@@ -63,11 +63,11 @@ public class SubscriptionService {
             throw new Exception("Already the best Subscription");
         }
         else if(subscriptionType.equals(PRO)){
-            user.setSubscription(ELITE);
+            user.getSubscription().setSubscriptionType(ELITE);
             amountToBePaidAfterUpdation=(1000 + 350*user.getSubscription().getNoOfScreensSubscribed())-amountToBePaidBeforeUpdation;
         }
         else if(subscriptionType.equals(BASIC)){
-            user.setSubscription(PRO);
+            user.getSubscription().setSubscriptionType(PRO);
             amountToBePaidAfterUpdation=(800 + 250*user.getSubscription().getNoOfScreensSubscribed())-amountToBePaidBeforeUpdation;
         }
         Subscription subscription=user.getSubscription();
