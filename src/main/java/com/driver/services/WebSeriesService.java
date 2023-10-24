@@ -40,11 +40,13 @@ public class WebSeriesService {
         webSeries.setSubscriptionType(webSeriesEntryDto.getSubscriptionType());
 
         ProductionHouse productionHouse=productionHouseRepository.findById(webSeriesEntryDto.getProductionHouseId()).get();
-
+        productionHouse.setRatings(webSeries.getRating());
         webSeries.setProductionHouse(productionHouse);
+        productionHouse.getWebSeriesList().add(webSeries);
 
         webSeriesRepository.save(webSeries);
         productionHouseRepository.save(productionHouse);
+
         return webSeries.getId();
     }
 
