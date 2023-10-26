@@ -27,26 +27,28 @@ public class SubscriptionService {
     public Integer buySubscription(SubscriptionEntryDto subscriptionEntryDto){
 
         //Save The subscription Object into the Db and return the total Amount that user has to pay
-        Subscription subscription=new Subscription();
+        User user = userRepository.findById(subscriptionEntryDto.getUserId()).get();
+
+        Subscription subscription = new Subscription();
         subscription.setSubscriptionType(subscriptionEntryDto.getSubscriptionType());
         subscription.setNoOfScreensSubscribed(subscriptionEntryDto.getNoOfScreensRequired());
-        subscription.setStartSubscriptionDate(new Date());
         SubscriptionType subscriptionType = subscription.getSubscriptionType();
         int noOfScreen = subscription.getNoOfScreensSubscribed();
 
-        User user= subscriptionRepository.findById(subscriptionEntryDto.getUserId()).get().getUser();
-
-        int priceOfSubscription=0;
+        int priceOdSubscription = 0;
 
         if(subscriptionType.equals(SubscriptionType.BASIC)){
-            priceOfSubscription = 500 + (200 *noOfScreen);
+            priceOdSubscription = 500 + (200 * noOfScreen);
         }else if(subscriptionType.equals(SubscriptionType.PRO)){
-            priceOfSubscription = 800 + (250 * noOfScreen);
+            priceOdSubscription = 800 + (250 * noOfScreen);
         }else{
-            priceOfSubscription = 1000 + (350 * noOfScreen);
+            priceOdSubscription = 1000 + (350 * noOfScreen);
         }
-        subscription.setTotalAmountPaid(priceOfSubscription);
+        subscription.setTotalAmountPaid(priceOdSubscription);
         subscription.setUser(user);
+        Date date = new Date();
+        subscription.setStartSubscriptionDate(date);
+
         user.setSubscription(subscription);
 
         return subscription.getTotalAmountPaid();
@@ -63,33 +65,32 @@ public class SubscriptionService {
         }
 
         Subscription subscription=user.getSubscription();
-        Integer totalAmountPaidBeforeUpgradation=subscription.getTotalAmountPaid();
-        Integer totalAmountPaidAfterUpgradation;
+        Integer previousFair=subscription.getTotalAmountPaid();
+        Integer currentFair;
         if(subscription.getSubscriptionType().equals(SubscriptionType.BASIC)){
             subscription.setSubscriptionType(SubscriptionType.PRO);
-            totalAmountPaidAfterUpgradation =totalAmountPaidBeforeUpgradation+300+(50*subscription.getNoOfScreensSubscribed());
+            currentFair =previousFair+300+(50*subscription.getNoOfScreensSubscribed());
         }else {
             subscription.setSubscriptionType(SubscriptionType.ELITE);
-            totalAmountPaidAfterUpgradation=totalAmountPaidBeforeUpgradation+200+(100*subscription.getNoOfScreensSubscribed());
+            currentFair=previousFair+200+(100*subscription.getNoOfScreensSubscribed());
         }
 
-        subscription.setTotalAmountPaid(totalAmountPaidAfterUpgradation);
+        subscription.setTotalAmountPaid(currentFair);
         user.setSubscription(subscription);
         subscriptionRepository.save(subscription);
 
-        return totalAmountPaidAfterUpgradation-totalAmountPaidBeforeUpgradation;
+        return currentFair-previousFair;
     }
 
     public Integer calculateTotalRevenueOfHotstar(){
 
         //We need to find out total Revenue of hotstar : from all the subscriptions combined
         //Hint is to use findAll function from the SubscriptionDb
-        List<Subscription> subscriptionList=subscriptionRepository.findAll();
+        List<Subscription> subscriptionList = subscriptionRepository.findAll();
 
-        Integer totalRevenue=0;
-
-        for(Subscription subscription:subscriptionList){
-            totalRevenue+=subscription.getTotalAmountPaid();
+        Integer totalRevenue = 0;
+        for(Subscription subscription : subscriptionList){
+            totalRevenue += subscription.getTotalAmountPaid();
         }
         return totalRevenue;
     }
