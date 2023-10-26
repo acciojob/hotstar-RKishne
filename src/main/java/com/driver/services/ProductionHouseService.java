@@ -24,11 +24,8 @@ public class ProductionHouseService {
     public Integer addProductionHouseToDb(ProductionHouseEntryDto productionHouseEntryDto){
         ProductionHouse productionHouse=new ProductionHouse();
         productionHouse.setName(productionHouseEntryDto.getName());
-        productionHouse.setRatings(0);
-        List<WebSeries> webSeriesList=new ArrayList<>();
-        productionHouse.setWebSeriesList(webSeriesList);
 
         productionHouseRepository.save(productionHouse);
-        return  productionHouse.getId();
+        return productionHouse.getId();
     }
 }
