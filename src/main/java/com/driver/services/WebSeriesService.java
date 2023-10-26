@@ -42,7 +42,7 @@ public class WebSeriesService {
             throw new Exception("Production house is not present");
         }
         webSeries.setProductionHouse(productionHouse);
-        webSeriesRepository.save(webSeries);
+        webSeries=webSeriesRepository.save(webSeries);
 
         List<WebSeries> webSeriesList=productionHouse.getWebSeriesList();
         webSeriesList.add(webSeries);
